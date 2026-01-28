@@ -20,7 +20,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { imageFileFilter, resizeAndSaveImage } from '../common/upload';
-import { CreateProductSwaggerDto } from './dto/create-product-swagger.dto';
+import { UpdateProductSwaggerDto } from './dto/create-product-swagger.dto';
 
 @ApiTags('Product')
 @ApiBearerAuth('access-token')
@@ -31,7 +31,7 @@ export class ProductController {
 
   @Post()
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: CreateProductSwaggerDto })
+  @ApiBody({ type: UpdateProductSwaggerDto })
   @UseInterceptors(
     FilesInterceptor('images', 5, {
       storage: multer.memoryStorage(),
@@ -66,14 +66,44 @@ export class ProductController {
     return this.productService.findAll();
   }
 
+  // ===============================
+  // UPDATE PRODUCT (UPLOAD IMAGE)
+  // ===============================
+  @Patch(':id')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateProductSwaggerDto })
+  @UseInterceptors(
+    FilesInterceptor('images', 5, {
+      storage: multer.memoryStorage(),
+      fileFilter: imageFileFilter,
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async update(
+    @Param('id') id: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() dto: UpdateProductDto,
+  ) {
+    const imagePaths: string[] = [];
+
+    for (const file of files ?? []) {
+      const path = await resizeAndSaveImage(file, {
+        format: 'webp',
+        quality: 80,
+      });
+      imagePaths.push(path);
+    }
+
+    return this.productService.update(Number(id), {
+      ...dto,
+      images: imagePaths.length ? imagePaths : undefined,
+    });
+  }
+
+  // ===============================
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(Number(id));
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
-    return this.productService.update(Number(id), dto);
   }
 
   @Delete(':id')

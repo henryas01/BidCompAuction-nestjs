@@ -20,7 +20,7 @@ export class CreateFlashsaleDto {
   stock: number;
 
   @IsString()
-  desc: string;
+  descriptions: string;
 
   @IsDateString()
   startAt: string;

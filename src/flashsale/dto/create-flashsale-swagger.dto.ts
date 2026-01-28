@@ -11,7 +11,7 @@ export class CreateFlashsaleSwaggerDto {
   stock: number;
 
   @ApiProperty({ example: 'Diskon besar terbatas waktu' })
-  desc: string;
+  descriptions: string;
 
   @ApiProperty({
     example: '2026-01-22T10:00:00Z',

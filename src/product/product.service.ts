@@ -12,11 +12,6 @@ export class ProductService {
     private readonly productRepo: Repository<Product>,
   ) {}
 
-  // create(dto: CreateProductDto) {
-  //   const product = this.productRepo.create(dto);
-  //   return this.productRepo.save(product);
-  // }
-
   async create(data: CreateProductDto & { images: string[] }) {
     const product = this.productRepo.create(data);
     return this.productRepo.save(product);
@@ -32,9 +27,19 @@ export class ProductService {
     return product;
   }
 
-  async update(id: number, dto: UpdateProductDto) {
-    await this.findOne(id);
-    await this.productRepo.update(id, dto);
+  async update(id: number, dto: UpdateProductDto & { images?: string[] }) {
+    const product = await this.findOne(id);
+
+    const newImages =
+      dto.images && dto.images.length
+        ? [...(product.images ?? []), ...dto.images]
+        : product.images;
+
+    await this.productRepo.update(id, {
+      ...dto,
+      images: newImages,
+    });
+
     return this.findOne(id);
   }
 

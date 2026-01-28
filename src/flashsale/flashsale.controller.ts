@@ -21,6 +21,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { imageFileFilter, resizeAndSaveImage } from '../common/upload';
 import { CreateFlashsaleDto } from './dto/create-flashsale.dto';
 import { UpdateFlashsaleDto } from './dto/update-flashsale.dto';
+import { UpdateFlashsaleSwaggerDto } from './dto/update-flashsale-swagger.dto';
 
 @ApiTags('FlashSale')
 @ApiBearerAuth('access-token')
@@ -69,16 +70,44 @@ export class FlashsaleController {
     return this.flashsaleService.findAllActive();
   }
 
+  // ===============================
+  // UPDATE FLASH SALE (UPLOAD IMAGE)
+  // ===============================
+  @Patch(':id')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateFlashsaleSwaggerDto })
+  @UseInterceptors(
+    FilesInterceptor('images', 5, {
+      storage: multer.memoryStorage(),
+      fileFilter: imageFileFilter,
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async update(
+    @Param('id') id: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() dto: UpdateFlashsaleDto,
+  ) {
+    const imagePaths: string[] = [];
+
+    for (const file of files ?? []) {
+      const path = await resizeAndSaveImage(file, {
+        format: 'webp',
+        quality: 80,
+      });
+      imagePaths.push(path);
+    }
+
+    return this.flashsaleService.update(Number(id), {
+      ...dto,
+      images: imagePaths.length ? imagePaths : undefined,
+    });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.flashsaleService.findOne(Number(id));
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateFlashsaleDto) {
-    return this.flashsaleService.update(Number(id), dto);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.flashsaleService.remove(Number(id));

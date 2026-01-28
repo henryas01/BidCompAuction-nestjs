@@ -23,15 +23,18 @@ export class FlashSale {
   stock: number;
 
   @Column('text')
-  desc: string;
+  descriptions: string;
 
-  @Column('simple-array')
+  @Column('simple-array', { nullable: true })
   images: string[];
 
-  @Column({ type: 'timestamp' })
+  // @Column({ type: 'json', nullable: true })
+  // images: string[];
+
+  @Column({ type: 'datetime' })
   startAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   endAt: Date;
 
   @Column({ default: true })

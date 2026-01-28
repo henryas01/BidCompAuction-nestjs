@@ -76,22 +76,23 @@ export class FlashsaleService {
     return flashsale;
   }
 
-  async update(id: number, dto: UpdateFlashsaleDto) {
+  async update(id: number, dto: UpdateFlashsaleDto & { images?: string[] }) {
     const flashsale = await this.findOne(id);
 
-    if (dto.startAt) {
-      flashsale.startAt = new Date(dto.startAt);
-    }
-
-    if (dto.endAt) {
-      flashsale.endAt = new Date(dto.endAt);
-    }
+    if (dto.startAt) flashsale.startAt = new Date(dto.startAt);
+    if (dto.endAt) flashsale.endAt = new Date(dto.endAt);
 
     if (dto.name !== undefined) flashsale.name = dto.name;
     if (dto.price !== undefined) flashsale.price = dto.price;
     if (dto.stock !== undefined) flashsale.stock = dto.stock;
-    if (dto.desc !== undefined) flashsale.desc = dto.desc;
+    if (dto.descriptions !== undefined)
+      flashsale.descriptions = dto.descriptions;
     if (dto.isActive !== undefined) flashsale.isActive = dto.isActive;
+
+    // ✅ APPEND IMAGE (INI KUNCI)
+    if (dto.images && dto.images.length) {
+      flashsale.images = [...(flashsale.images ?? []), ...dto.images];
+    }
 
     return this.repo.save(flashsale);
   }

@@ -132,6 +132,20 @@ export class PaymentService {
   // ===============================
   // GET MY INVOICES (BY TOKEN)
   // ===============================
+  // findMyInvoices(userId: number) {
+  //   return this.invoiceRepo.find({
+  //     relations: ['payment'],
+  //     where: {
+  //       payment: {
+  //         userId,
+  //       },
+  //     },
+  //   });
+  // }
+
+  // ===============================
+  // GET MY INVOICES (BY TOKEN)
+  // ===============================
   findMyInvoices(userId: number) {
     return this.invoiceRepo.find({
       relations: ['payment'],

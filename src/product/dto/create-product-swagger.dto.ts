@@ -1,21 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateProductSwaggerDto {
-  @ApiProperty()
-  name: string;
+export class UpdateProductSwaggerDto {
+  @ApiPropertyOptional({ example: 'New Product Name' })
+  name?: string;
 
-  @ApiProperty()
-  price: number;
+  @ApiPropertyOptional({ example: 150000 })
+  price?: number;
 
-  @ApiProperty()
-  stock: number;
+  @ApiPropertyOptional({ example: 'Updated description' })
+  desc?: string;
 
-  @ApiProperty()
-  desc: string;
-
-  @ApiProperty({
-    type: 'array',
-    items: { type: 'string', format: 'binary' },
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'binary',
+    isArray: true,
   })
-  images: any[];
+  images?: any[];
 }

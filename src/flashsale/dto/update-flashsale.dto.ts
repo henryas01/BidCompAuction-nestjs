@@ -1,12 +1,5 @@
-import { PartialType } from '@nestjs/swagger';
-import {
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsDateString,
-  Min,
-} from 'class-validator';
-
+import { IsString, IsNumber, IsOptional, IsDateString } from 'class-validator';
+// import { Type } from 'class-transformer';
 export class UpdateFlashsaleDto {
   @IsOptional()
   @IsString()
@@ -14,17 +7,15 @@ export class UpdateFlashsaleDto {
 
   @IsOptional()
   @IsNumber()
-  @Min(0)
   price?: number;
 
   @IsOptional()
   @IsNumber()
-  @Min(0)
   stock?: number;
 
   @IsOptional()
   @IsString()
-  desc?: string;
+  descriptions?: string;
 
   @IsOptional()
   @IsDateString()
@@ -34,10 +25,6 @@ export class UpdateFlashsaleDto {
   @IsDateString()
   endAt?: string;
 
-  /**
-   * Manual override (optional)
-   * contoh: disable flashsale sebelum waktunya
-   */
   @IsOptional()
   isActive?: boolean;
 }

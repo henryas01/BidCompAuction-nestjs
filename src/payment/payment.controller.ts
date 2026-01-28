@@ -22,9 +22,9 @@ import { CreatePaymentSwaggerDto } from './dto/create-payment-swagger.dto';
 import type { JwtRequest } from 'src/auth/interfaces/jwt-request.interface';
 
 @ApiTags('Payment')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-@Controller('api/payment')
+@Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
@@ -68,6 +68,14 @@ export class PaymentController {
   }
 
   // ===============================
+  // GET MY INVOICES (BY TOKEN)
+  // ===============================
+  @Get('invoice/me')
+  getMyInvoices(@Req() req: JwtRequest) {
+    return this.paymentService.findMyInvoices(req.user.sub);
+  }
+
+  // ===============================
   // GET PAYMENT BY ID
   // ===============================
   @Get(':id')
@@ -94,10 +102,10 @@ export class PaymentController {
   // ===============================
   // GET MY INVOICES
   // ===============================
-  @Get('invoice')
-  getMyInvoices(@Req() req: JwtRequest) {
-    return this.paymentService.findMyInvoices(req.user.sub);
-  }
+  // @Get('invoice')
+  // getMyInvoices(@Req() req: JwtRequest) {
+  //   return this.paymentService.findMyInvoices(req.user.sub);
+  // }
 
   // ===============================
   // GET INVOICE BY PAYMENT
